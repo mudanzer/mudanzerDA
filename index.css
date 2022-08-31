@@ -1,0 +1,82 @@
+html, body {
+
+    /*font-family: Verdana, Geneva, sans-serif;*/
+    font-family: 'Open Sans', sans-serif;
+    /*font-size: 18px;*/
+
+    height: 100%;
+
+    margin: 0;
+    padding: 0;
+
+}
+
+#version {
+    padding: 20px;
+    text-align: center;
+}
+
+#os {
+    padding: 20px;
+    text-align: center;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    height: 100%;
+
+    /*background-color: rebeccapurple;*/
+}
+
+main > div {
+    /*box-sizing: content-box;*/
+
+    /*align-items: center;*/
+    /*display: flex;*/
+    /*flex-direction: row;*/
+    /*justify-content: space-around;*/
+}
+
+a#url {
+    background: #5cb85c linear-gradient(to bottom, #5cb85c 0, #419641 100%) repeat-x;
+    border-color: #3e8f3e;
+
+    border-radius: 3px;
+    color: #000;
+    display: block;
+
+    /*width: 80%;*/
+    /*width: auto;*/
+    padding: 20px;
+    text-align: center;
+    text-decoration: none;
+
+    box-shadow: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+}
+
+#instruction {
+    padding: 20px;
+    text-align: center;
+
+
+    /*text-decoration: none;*/
+    /*background-color: red;*/
+    /*text-align: center;*/
+}
+
+#instruction > a {
+    text-decoration: none;
+}
+
+.text {
+    padding-top: 10px;
+    line-height: 1.5;
+    width: 100%;
+    color: red;
+    /*background-color: blue;*/
+    text-align: center;
+    align-items: center;
+}

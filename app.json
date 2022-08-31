@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Mudanzer",
+    "owner": "y_balaev",
+    "slug": "expo-template-tabs",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/app-icon.png",
+    "scheme": "myapp",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/images/app-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.gazelkin.mudanzer",
+      "buildNumber": "1.0.0"
+    },
+    "android": {
+      "package": "com.gazelkin.mudanzer",
+      "versionCode": 1
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "ba8ecda3-8c07-4abb-8ae7-49439143a5e6"
+      }
+    }
+  }
+}

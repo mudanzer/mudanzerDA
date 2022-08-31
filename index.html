@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Aplicaciones para conductores</title>
+
+    <!-- <link rel="shortcut icon" type="image/png" href="icon.png"/> -->
+
+    <link href="index.css?v6" rel="stylesheet" type="text/css">
+
+    <script src="detect.js"></script>
+
+</head>
+<body>
+
+    <main>
+        <div>
+            <!-- <div id="instruction">
+                <a href="../instruction.pdf" target="_blank">Скачать инструкцию</a>
+            </div> -->
+
+            <div id="version">1.0.0</div>
+
+            <a id="url">Вescargar la aplicación</a>
+
+            <div id="os"></div>
+
+            <!-- <div class="text">
+                <div>Перед установкой приложения</div>
+                <div>удалите старую версию</div>
+            </div> -->
+        </div>
+    </main>
+
+    <script>
+        let link = document.getElementById("url");
+
+        let OS = getMobileOperatingSystem();
+
+        if (OS === "iOS")
+            link.href = "itms-services://?action=download-manifest&amp;url=https://mudanzer.github.io/mudanzerDA/mudanzer.plist"
+
+        else
+            link.href = "https://mudanzer.github.io/mudanzerDA/mudanzer.apk"
+
+        if (OS === "iOS" || OS === "Android") {
+
+            document.getElementById("os").innerText = OS;
+
+            fetch("https://mudanzer.github.io/mudanzerDA/version.json?" + new Date().toString())
+                .then(response => response.json())
+                .then(json => {
+                    document.getElementById('version').innerText = json.version;
+                });
+
+        } else {
+
+            document.getElementById("os").innerText = "Tipo desconocido ОС";
+        }
+
+    </script>
+
+</body>
+</html>
