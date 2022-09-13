@@ -1,3 +1,4 @@
+import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Alert, LayoutAnimation, RefreshControl, SafeAreaView, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
@@ -10,6 +11,7 @@ export default function Orders() {
   const [activeTab, setActiveTab] = useState(1);
   const [orders, setOrders] = useState([]);
   const [refressing, setRefreshing] = useState(false);
+  const navigation = useNavigation();
 
   const getOrders = () => {
     LayoutAnimation.configureNext({
@@ -19,7 +21,11 @@ export default function Orders() {
         duration: 500,
       }
     });
-        getValue('sessionToken').then((token) => {
+    getValue('sessionToken').then((token) => {
+      if (token === '') {
+        setRefreshing(false);
+        logout();
+      }
           if (token && token.length > 0) {
             let params = {
                 headers: {
@@ -32,9 +38,49 @@ export default function Orders() {
                 setOrders(response.data.orders);
                 setRefreshing(false)
               }
-        }).catch(() => setRefreshing(false))
+              if (!response) {
+                navigation.navigate('Authorization');
+              }
+        }).catch((errors) => {
+          setRefreshing(false)
+        })
       } else { setRefreshing(false) }
+    }).catch(() => {
+      setRefreshing(false);
+      logout();
     });
+  }
+
+  const logout = () => {
+    getValue('isAutorized').then((result) => {
+      console.log('logout orders', result);
+      if (result === 'true') {
+        LayoutAnimation.configureNext({
+          create: {
+            type: LayoutAnimation.Types.spring,
+            property: LayoutAnimation.Properties.opacity,
+            duration: 2000,
+            springDamping: 0.5,
+          }
+        });
+        getValue('sessionToken').then((token) => {
+                if (token.length > 0) {
+                  let params = {
+                      headers: {
+                        "X-Session-Token": token,
+                    }
+                  };
+                  logoutRequest(params).then(() => {
+                    save('isAutorized', 'false');
+                    save('sessionToken', '');
+                    navigation.navigate('Authorization');
+              });
+            }
+        });
+      } else {
+        navigation.navigate('Authorization');
+      }
+    }).catch(() => navigation.navigate('Authorization'))
   }
   useEffect(() => {
     getOrders();

@@ -27,10 +27,13 @@ export default function ProfileScreen() {
           if (response && response.data) {
                 setUserData(response?.data);
                 setRefreshing(false)
+            } 
+            if (!response) {
+              navigation.navigate('Authorization');
             }
         }).catch((errors) => console.log('errors', JSON.stringify(errors)))
       } else {setRefreshing(false)}
-    });
+    }).catch(() => logout())
   }
   const onPressLogoutBtn = () => {
     Alert.alert('¿Quieres salir de la aplicación?', '', [
@@ -45,7 +48,7 @@ export default function ProfileScreen() {
   }
   const logout = () => {
     getValue('isAutorized').then((result) => {
-      if (result) {
+      if (result === 'true') {
         LayoutAnimation.configureNext({
           create: {
             type: LayoutAnimation.Types.spring,
@@ -68,8 +71,11 @@ export default function ProfileScreen() {
               });
             }
         });
+        console.log('result', result)
+      } else {
+        navigation.navigate('Authorization');
       }
-    })
+    }).catch(() => navigation.navigate('Authorization'))
   }
   useEffect(() => {
     getUserData();

@@ -41,6 +41,7 @@ export default function Authorization({ navigation }) {
           //       setIsValid(true);
           //   }, 2000);
           // }
+          // console.log('response', response)
           if (response && response.data) {
             save('sessionToken', response.data?.data?.sessionToken);
             save('isAutorized', 'true');
@@ -53,7 +54,7 @@ export default function Authorization({ navigation }) {
             }, 2000);
           }
         })
-        .catch((er) => console.log('er', JSON.stringify(er)));
+        .catch((er) => console.log('error', JSON.stringify(er)));
     }
   return (
     <View style={{flex: 1, paddingBottom: 40}}>

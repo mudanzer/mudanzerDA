@@ -1,5 +1,7 @@
+import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Alert } from 'react-native';
+import { navigateTo, save } from './index';
 // const api = 'http://10.11.1.9:8000/api/drivers/';
 const api = 'https://operador.mudanzer.es/api/drivers/';
 
@@ -19,7 +21,7 @@ const post = async (url, params) => {
    }).then((result) => {
     return result;
     }).catch((er) => {
-        console.log('er', er);
+        // console.log('er', er);
         if (er?.code === 'ERR_NETWORK') {
             return Alert.alert('Sin conexión a Internet','', [
                 {
@@ -27,6 +29,7 @@ const post = async (url, params) => {
                 }
             ])
         }
+        return er;
     })
 };
 
@@ -37,16 +40,22 @@ const get = async (url, config) => {
             'Accept': 'application/json',
         },
     }).then((result) => {
+        console.log('result', result);
          return result;
      }).catch((er) => {
-        console.log('er', er);
+        // console.log('get er', er?.response?.status);
+        if (er?.response?.status === 401) {
+            save('isAutorized', 'false').then();
+            save('sessionToken', '').then();
+        }
         if (er?.code === 'ERR_NETWORK') {
             return Alert.alert('Sin conexión a Internet','', [
                 {
                     text: 'Es comprensible'
                 }
             ])
-        }
+        } 
+            return er;
      });
  }
  
