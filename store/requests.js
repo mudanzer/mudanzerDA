@@ -40,7 +40,7 @@ const get = async (url, config) => {
             'Accept': 'application/json',
         },
     }).then((result) => {
-        console.log('result', result);
+        // console.log('result', result);
          return result;
      }).catch((er) => {
         // console.log('get er', er?.response?.status);

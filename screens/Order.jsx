@@ -2,6 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View , ScrollView, Linking, Platform, Alert, RefreshControl} from "react-native"
+import { SafeAreaView } from "react-native-safe-area-context";
 import { getPaymentMethodName, getValue } from "../store";
 import { getOrderByIdRequest } from "../store/requests";
 
@@ -60,6 +61,7 @@ const Order = (props) => {
       }
 
     return (
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginBottom: -40 }}>
         <ScrollView style={styles.container}
         refreshControl={
           <RefreshControl size={'large'} color={'black'} onRefresh={getOrderById} refreshing={refressing}/>}
@@ -113,16 +115,16 @@ const Order = (props) => {
                 <Text style={{fontSize: 16, color: 'gray'}}>{'Nota'}</Text>
                 <Text style={{fontSize: 16, color: 'black'}}>{order?.notes}</Text>
              </View>
-            <View style={{marginBottom: 60}} />
+            {/* <View style={{marginBottom: 60}} />/ */}
         </ScrollView>
+      </SafeAreaView>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
       flex: 1,
-      marginVertical: 20,
-      paddingTop: 60,
+      marginVertical: 10,
       backgroundColor: '#fff',
     },
     datetime: {

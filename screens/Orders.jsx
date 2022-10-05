@@ -35,7 +35,16 @@ export default function Orders() {
         setRefreshing(true)
         getOrdersRequest(params).then((response) => {
           if (response && response.data) {
-                setOrders(response.data.orders);
+                const orders = response?.data?.orders;
+                const statusNew = orders.find((order) => order?.status_id === 'NEW');
+                let newOrders = [];
+                if (statusNew?.id) {
+                  newOrders.push(statusNew ?? []);
+                  setOrders(newOrders);
+                }  else {
+                  setOrders([])
+                }
+                console.log('response?.data?.orders', newOrders, statusNew, newOrders.length);
                 setRefreshing(false)
               }
               if (!response) {
@@ -122,7 +131,7 @@ export default function Orders() {
                <Text style={{color: 'black', fontSize: 20}}>No hay pedidos</Text>
              </View>
           )}
-        {orders?.map((item, index) => {
+        {orders.length > 0 && orders?.map((item, index) => {
           return (<OrderCard key={index} data={item}/>)
         })}
         <View style={{marginBottom: 100}} />
