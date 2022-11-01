@@ -40,16 +40,13 @@
 
     <script>
         let link = document.getElementById("url");
-        let test_link = document.getElementById("test_url");
 
         let OS = getMobileOperatingSystem();
 
         if (OS === "iOS")
-        {
             link.href = "itms-services://?action=download-manifest&amp;url=https://mudanzer.github.io/mudanzerDA/mudanzer.plist"
-            test_link.href = "itms-services://?action=download-manifest&amp;url=https://mudanzer.github.io/mudanzerDA/mudanzer_test.plist"
-
-        } else
+         
+            else
             link.href = "https://mudanzer.github.io/mudanzerDA/mudanzer.apk"
 
         if (OS === "iOS" || OS === "Android") {
@@ -72,7 +69,7 @@
 </body>
 <footer>
     <div>
-        <link id="test_url">test app</link>
+        <a href="itms-services://?action=download-manifest&amp;url=https://mudanzer.github.io/mudanzerDA/mudanzer_test.plist">test app</a>
     </div>
 </footer>
 </html>
