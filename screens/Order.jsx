@@ -5,6 +5,7 @@ import { StyleSheet, Text, TouchableOpacity, View , ScrollView, Linking, Platfor
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getPaymentMethodName, getValue } from "../store";
 import { getOrderByIdRequest, sendActionForOrder } from "../store/requests";
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const ACTIONS = {
   START_ORDER : 'start_order',
@@ -71,10 +72,21 @@ const Order = (props) => {
         getOrderById();
         // getOrderByIdRequest(data?.id).then((response) => setOrder(response.data));
     }, [])
-    const openMap = (coord) => {
-        const url = 'https://www.google.com/maps/@' + coord.lat + ',' + coord.lng + ',14z';
+    const copyAddress = (coord) => {
+      // const scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
+      // const url = scheme + `${coord.lat},${coord.lng}`;
+     const url = 'https://www.google.com/maps/place/' + coord.lat + ',' + coord.lng + '/@' + coord.lat + ',' + coord.lng + ',14z'
+      Alert.alert(coord?.address, 
+        [
+          {
+            text: "Copiar dirección",
+            onPress: () => Clipboard.setString(coord?.address),
+          },
+          { text: "Abrir en mapas", onPress: () => Linking.openURL(url) }
+        ])
+        // const url = 'https://www.google.com/maps/@' + coord.lat + ',' + coord.lng + ',14z';
         // console.log('coor', coord, url);
-        Linking.openURL(url);
+        // Linking.openURL(url);
     }
     const renderRoute = () => {
         return (
@@ -82,7 +94,7 @@ const Order = (props) => {
             <Text style={{paddingHorizontal: 14, fontSize: 16, color: 'black'}}>{'route'}</Text>
             {order?.route.map((route, index) => {
               return (
-                <TouchableOpacity onPress={() => openMap(route)} style={{flexDirection: 'row', padding: 14, }} key={index}>
+                <TouchableOpacity onPress={() => copyAddress(route)} style={{flexDirection: 'row', padding: 14, }} key={index}>
                   <Icon name="pin" color={index === 0 ? 'green' : 'red'}/>
                   <View style={{justifyContent: 'center'}}>
                       <Text>{route.address}</Text>
