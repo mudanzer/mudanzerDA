@@ -16,7 +16,7 @@ export default function App() {
   } else {
     return (
       <SafeAreaProvider>
-        <StatusBar />
+        <StatusBar style="dark"/>
         <Navigation />
       </SafeAreaProvider>
     );

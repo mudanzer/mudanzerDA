@@ -4,17 +4,48 @@ import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View , ScrollView, Linking, Platform, Alert, RefreshControl} from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getPaymentMethodName, getValue } from "../store";
-import { getOrderByIdRequest } from "../store/requests";
+import { getOrderByIdRequest, sendActionForOrder } from "../store/requests";
+
+const ACTIONS = {
+  START_ORDER : 'start_order',
+  END_ORDER : 'end_order',
+}
+const title_start_order = 'Iniciar pedido';
+const title_end_order = 'Completar el pedido';
 
 function Icon(props) {
     return <Ionicons size={32} style={{ marginBottom: -3 }} {...props} />;
   }
-  
+
 const Order = (props) => {
     const navigation = useNavigation();
     const [refressing, setRefreshing] = useState(false);
     const id = props?.route?.params?.id;
     const [order, setOrder] = useState();
+    const counter_total = order?.counter_total ?? 0;
+    
+    const currentAction = order?.actions[0] ?? [];
+    const [textInButton, setTextInButton] = useState(title_start_order);
+    const isVisibleButton = order?.actions?.length && order?.status_id === 'NEW'
+
+    useEffect(() => {
+      if (currentAction === ACTIONS.START_ORDER) {
+        setTextInButton(title_start_order);
+      }
+      if (currentAction === ACTIONS.END_ORDER){
+        setTextInButton(title_end_order);
+      }
+    }, [currentAction])
+
+    const onPressAction = () => {
+      if (currentAction === ACTIONS.START_ORDER) {
+        sendActionForOrder(id, ACTIONS.START_ORDER)
+      } else {
+        sendActionForOrder(id, ACTIONS.END_ORDER)
+      }
+      getOrderById();
+    }
+
     const getOrderById = () => {
         getValue('sessionToken').then((token) => {
             if (token.length > 0) {
@@ -60,8 +91,17 @@ const Order = (props) => {
         )
       }
 
+    const renderAlert = () => {
+      return (
+        <View style={{ position: 'absolute',zIndex: 1, bottom: 100, left: 0, right: 0, backgroundColor: 'rgba(234, 1, 1, 1)'}}>
+          <Text style={{ color: 'white', fontSize: 20, padding: 14 }}>{'Si ha llegado al punto de carga/descarga, actualice el pedido tirando hacia abajo'}</Text>
+        </View>
+      )
+    }
+
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginBottom: -40 }}>
+        {!order?.actions.length && order?.status_id === 'NEW' && renderAlert()}
         <ScrollView style={styles.container}
         refreshControl={
           <RefreshControl size={'large'} color={'black'} onRefresh={getOrderById} refreshing={refressing}/>}
@@ -85,17 +125,18 @@ const Order = (props) => {
             </View>
             <View style={{borderWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between'}}>
                 <Text style={{padding: 12, color: 'black', fontSize: 18,}}>Costo</Text>
-                    <Text style={{padding: 12, color: 'black', fontSize: 18,}}>{order?.total + ' €'}</Text>
+                    <Text style={{padding: 12, color: 'black', fontSize: 18,}}>{(order?.total > counter_total ? order?.total : counter_total) + ' €'}</Text>
                 </View>
             <View style={{padding: 14}}>
                   <Text style={{fontSize: 16, color: 'gray'}}>{'Método de pago'}</Text>
                   <Text style={{fontSize: 16, color: 'black'}}>{getPaymentMethodName(order?.payment_method)}</Text>
               </View>
-            <View style={{borderWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between'}}>
-                <Text style={{padding: 12, color: 'black', fontSize: 18,}}>Duración</Text>
-                    <Text style={{padding: 12, color: 'black', fontSize: 18,}}>{order?.duration}</Text>
-                </View>
-                {renderRoute()}
+              {isVisibleButton && (
+                  <TouchableOpacity onPress={onPressAction} style={styles.arrivedBtn}>
+                      <Text>{textInButton}</Text>
+                  </TouchableOpacity>
+              )}
+              {renderRoute()}
                 <View  style={{borderWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, paddingRight: 50}}>
                     <View>
                         <Text style={{paddingHorizontal: 12, color: 'gray', fontSize: 18,}}>Cliente</Text>
@@ -111,6 +152,7 @@ const Order = (props) => {
                         <Icon name='call' color={'gray'} size={26}/>
                      </TouchableOpacity>
              </View>
+
              <View style={{padding: 14}}>
                 <Text style={{fontSize: 16, color: 'gray'}}>{'Nota'}</Text>
                 <Text style={{fontSize: 16, color: 'black'}}>{order?.notes}</Text>
@@ -131,6 +173,14 @@ const styles = StyleSheet.create({
       fontSize: 14,
       color:'gray',
     },
+    arrivedBtn: {
+      marginHorizontal: 20,
+      marginVertical: 10,
+      borderWidth: 0.5,
+      borderRadius: 10,
+      padding: 14,
+      alignItems: 'center'
+    }
   });
   
 export default Order;

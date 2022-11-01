@@ -25,7 +25,7 @@
                 <a href="../instruction.pdf" target="_blank">Скачать инструкцию</a>
             </div> -->
 
-            <div id="version">1.1.0</div>
+            <div id="version">1.2.0</div>
 
             <a id="url">Вescargar la aplicación</a>
 
@@ -40,13 +40,16 @@
 
     <script>
         let link = document.getElementById("url");
+        let test_link = document.getElementById("test_url");
 
         let OS = getMobileOperatingSystem();
 
         if (OS === "iOS")
+        {
             link.href = "itms-services://?action=download-manifest&amp;url=https://mudanzer.github.io/mudanzerDA/mudanzer.plist"
+            test_link.href = "itms-services://?action=download-manifest&amp;url=https://mudanzer.github.io/mudanzerDA/mudanzer_test.plist"
 
-        else
+        } else
             link.href = "https://mudanzer.github.io/mudanzerDA/mudanzer.apk"
 
         if (OS === "iOS" || OS === "Android") {
@@ -67,4 +70,9 @@
     </script>
 
 </body>
+<footer>
+    <div>
+        <link id="test_url">test app</link>
+    </div>
+</footer>
 </html>

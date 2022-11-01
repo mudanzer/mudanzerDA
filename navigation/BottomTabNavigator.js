@@ -11,12 +11,11 @@ import ProfileScreen from "../screens/Profile";
 const BottomTab = createBottomTabNavigator();
 
 export default function BottomTabNavigator() {
-  const colorScheme = useColorScheme();
 
   return (
     <BottomTab.Navigator
       initialRouteName="Orders"
-      screenOptions={{ tabBarActiveTintColor: Colors[colorScheme].tint }}
+      screenOptions={{ tabBarActiveTintColor: 'black' }}
     >
       <BottomTab.Screen
         name="Pedidos"
@@ -54,7 +53,7 @@ function OrdersNavigator() {
       <TabOneStack.Screen
         name="OrdersScreen"
         component={Orders}
-        options={{ headerShown: false}}
+        options={{ headerShown: false }}
       />
       <TabOneStack.Screen
         name="OrderById"

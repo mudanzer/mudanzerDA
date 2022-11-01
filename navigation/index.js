@@ -1,19 +1,14 @@
 
 import {
-  DarkTheme,
-  DefaultTheme,
   NavigationContainer,
 } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import Authorization from "../screens/AuthScreen";
 import BottomTabNavigator from "./BottomTabNavigator";
-import LinkingConfiguration from "./LinkingConfiguration";
 
 export default function Navigation({ colorScheme }) {
   return (
-    <NavigationContainer
-      linking={LinkingConfiguration}
-        >
+    <NavigationContainer >
       <RootNavigator />
     </NavigationContainer>
   );

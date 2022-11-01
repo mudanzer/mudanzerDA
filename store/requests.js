@@ -10,6 +10,7 @@ const LOG_OUT = api + 'auth/logout';
 const PROFILE = api + 'profile';
 const ORDERS = api + 'orders';
 const ORDER_ID = api + 'orders';
+const SEND_ACTION = api + ORDERS;
 
 const post = async (url, params) => {
    const data = JSON.stringify(params);
@@ -78,5 +79,10 @@ export const getOrderByIdRequest = (params, id) => {
 }
 export const getProfileRequest = (params) => {
     const data = get(PROFILE, params).then((response) => response.data);
+    return data;
+}
+
+export const sendActionForOrder = (id, action) => {
+    const data = post(`${SEND_ACTION}/${id}/action/${action}`).then((response) => response);
     return data;
 }
