@@ -36,15 +36,7 @@ export default function Orders() {
         getOrdersRequest(params).then((response) => {
           if (response && response.data) {
                 const orders = response?.data?.orders;
-                const statusNew = orders.find((order) => order?.status_id === 'NEW');
-                let newOrders = [];
-                if (statusNew?.id) {
-                  newOrders.push(statusNew ?? []);
-                  setOrders(newOrders);
-                }  else {
-                  setOrders([])
-                }
-                console.log('response?.data?.orders', newOrders, statusNew, newOrders.length);
+                setOrders(orders.filter((order) => order?.status_id === 'NEW') ?? []);
                 setRefreshing(false)
               }
               if (!response) {

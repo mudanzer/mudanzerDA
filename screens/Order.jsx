@@ -76,13 +76,15 @@ const Order = (props) => {
       // const scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
       // const url = scheme + `${coord.lat},${coord.lng}`;
      const url = 'https://www.google.com/maps/place/' + coord.lat + ',' + coord.lng + '/@' + coord.lat + ',' + coord.lng + ',14z'
-      Alert.alert(coord?.address, 
+      Alert.alert('', coord?.address, 
         [
           {
             text: "Copiar dirección",
             onPress: () => Clipboard.setString(coord?.address),
           },
-          { text: "Abrir en mapas", onPress: () => Linking.openURL(url) }
+          { text: "Abrir en mapas",
+            onPress: () => Linking.openURL(url)
+          }
         ])
         // const url = 'https://www.google.com/maps/@' + coord.lat + ',' + coord.lng + ',14z';
         // console.log('coor', coord, url);
