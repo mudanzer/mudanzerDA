@@ -26,7 +26,7 @@ const Order = (props) => {
     
     const currentAction = order?.actions[0] ?? [];
     const [textInButton, setTextInButton] = useState(title_start_order);
-    const isVisibleButton = order?.actions?.length && order?.status_id === 'NEW'
+    const isVisibleButton = order?.actions?.length > 0 && order?.status_id === 'NEW'
 
     useEffect(() => {
       if (currentAction === ACTIONS.START_ORDER) {
@@ -56,7 +56,10 @@ const Order = (props) => {
               };
               getOrderByIdRequest(params, id).then((response) => {
             if (response && response.data) {
-                  setOrder(response?.data);
+              console.log(response.data);
+                  setOrder(response.data);
+                  // const { actions, status_id } = response?.data;
+                  // setIsVisibleButton(actions?.length > 0 && status_id === 'NEW')
                 //   Alert.alert('getOrderByIdRequest', JSON.stringify(response))
                   setRefreshing(false)
                 }
