@@ -1,12 +1,15 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
-import { StyleSheet, Text, TouchableOpacity, View , ScrollView, Linking, Platform, Alert, RefreshControl} from "react-native"
+import { StyleSheet, Text, TouchableOpacity, View , ScrollView, Linking, Platform, Alert, RefreshControl, ActivityIndicator} from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
 import { getPaymentMethodName, getValue } from "../store";
 import { getOrderByIdRequest, sendActionForOrder } from "../store/requests";
 import Clipboard from '@react-native-clipboard/clipboard';
+import { getDate, getTimeString } from '../store/index';
+import Counter from "../components/Counter";
 
+// 90433607 1096
 const ACTIONS = {
   START_ORDER : 'start_order',
   END_ORDER : 'end_order',
@@ -21,10 +24,27 @@ function Icon(props) {
 const Order = (props) => {
     const navigation = useNavigation();
     const [refressing, setRefreshing] = useState(false);
+    const [fullLoading, setFullLoading] = useState(false);
     const id = props?.route?.params?.id;
     const [order, setOrder] = useState();
     const counter_total = order?.counter_total ?? 0;
+
+    const start_date = new Date(order?.date_start).getTime() / 1000 ?? 0;
+    const [time, setTime] = useState(0);
     
+    const isVisibleTime = order?.date_start !== null;
+
+    useEffect(() => {
+      if (order?.date_start !== null) {
+        const timer = setInterval(() => {
+          setTime((old) => old - 1);
+      }, 1000);
+
+      return () => clearInterval(timer);
+      }
+  }, [time, order?.date_start]);
+
+
     const currentAction = order?.actions[0] ?? [];
     const [textInButton, setTextInButton] = useState(title_start_order);
     const isVisibleButton = order?.actions?.length > 0 && order?.status_id === 'NEW'
@@ -40,9 +60,22 @@ const Order = (props) => {
 
     const onPressAction = () => {
       if (currentAction === ACTIONS.START_ORDER) {
-        sendActionForOrder(id, ACTIONS.START_ORDER)
+        getValue('sessionToken').then((token) => {
+              if (token && token.length > 0) {
+                sendActionForOrder(id, ACTIONS.START_ORDER, token).then().catch((er) => console.log(er));
+          }
+        });
       } else {
-        sendActionForOrder(id, ACTIONS.END_ORDER)
+        getValue('sessionToken').then((token) => {
+              if (token && token.length > 0) {
+                sendActionForOrder(id, ACTIONS.END_ORDER, token).then((response) => {
+                  if (response && response?.data) {
+                    // console.log(response.data);
+                    Alert.alert('La solicitud para cerrar el pedido ha sido enviada. Un operador se pondrá en contacto contigo.')
+                  }
+                }).catch((er) => console.log(er));
+          }
+        });
       }
       getOrderById();
     }
@@ -55,6 +88,7 @@ const Order = (props) => {
                     "X-Session-Token": token,
                 }
               };
+              setFullLoading(true);
               getOrderByIdRequest(params, id).then((response) => {
             if (response && response.data) {
               console.log(response.data);
@@ -63,7 +97,8 @@ const Order = (props) => {
                   // setIsVisibleButton(actions?.length > 0 && status_id === 'NEW')
                 //   Alert.alert('getOrderByIdRequest', JSON.stringify(response))
                   setRefreshing(false)
-                }
+                  setFullLoading(false);
+              }
           }).catch((errors) => console.log('errors', JSON.stringify(errors)))
         }
       });
@@ -110,14 +145,19 @@ const Order = (props) => {
 
     const renderAlert = () => {
       return (
-        <View style={{ position: 'absolute',zIndex: 1, bottom: 100, left: 0, right: 0, backgroundColor: 'rgba(234, 1, 1, 1)'}}>
+        <View style={{ position: 'absolute',zIndex: 1, bottom: 100, left: 0, right: 0, backgroundColor: 'rgba(234, 1, 1, 0.8)'}}>
           <Text style={{ color: 'white', fontSize: 20, padding: 14 }}>{'Si ha llegado al punto de carga/descarga, actualice el pedido tirando hacia abajo'}</Text>
         </View>
       )
     }
 
     return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginBottom: -40 }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginBottom: -40, zIndex: 1 }}>
+        {fullLoading && (
+           <View style={{position: 'absolute', top: '50%', left: '50%', zIndex: 2, backgroundColor: 'transparent', alignItems: 'center', justifyContent: 'center'}}>
+            <ActivityIndicator size={'large'} color={'black'} />
+          </View>
+        )}
         {!order?.actions.length && order?.status_id === 'NEW' && renderAlert()}
         <ScrollView style={styles.container}
         refreshControl={
@@ -148,12 +188,19 @@ const Order = (props) => {
                   <Text style={{fontSize: 16, color: 'gray'}}>{'Método de pago'}</Text>
                   <Text style={{fontSize: 16, color: 'black'}}>{getPaymentMethodName(order?.payment_method)}</Text>
               </View>
+              {isVisibleTime && (
+              <View style={{ alignItems: 'center', borderTopWidth: 0.5, borderBottomWidth: 0.5, paddingVertical: 14, marginVertical: 10 }}>
+                  <Text style={{ fontSize: 30, fontWeight: '700', lineHeight: 44 }}>
+                      {getTimeString((getDate().getTime() / 1000) - start_date)}
+                  </Text>
+              </View>
+              )}
               {isVisibleButton && (
                   <TouchableOpacity onPress={onPressAction} style={styles.arrivedBtn}>
                       <Text>{textInButton}</Text>
                   </TouchableOpacity>
               )}
-              {renderRoute()}
+              {order?.route?.length > 0 && renderRoute()}
                 <View  style={{borderWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, paddingRight: 50}}>
                     <View>
                         <Text style={{paddingHorizontal: 12, color: 'gray', fontSize: 18,}}>Cliente</Text>
@@ -170,10 +217,13 @@ const Order = (props) => {
                      </TouchableOpacity>
              </View>
 
-             <View style={{padding: 14}}>
-                <Text style={{fontSize: 16, color: 'gray'}}>{'Nota'}</Text>
-                <Text style={{fontSize: 16, color: 'black'}}>{order?.notes}</Text>
-             </View>
+              {order?.notes !== null && (
+                  <View style={{padding: 14}}>
+                  <Text style={{fontSize: 16, color: 'gray'}}>{'Nota'}</Text>
+                  <Text style={{fontSize: 16, color: 'black'}}>{order?.notes}</Text>
+               </View>
+             )}
+
             {/* <View style={{marginBottom: 60}} />/ */}
         </ScrollView>
       </SafeAreaView>

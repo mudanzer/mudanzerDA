@@ -54,7 +54,7 @@ export default function Orders() {
 
   const logout = () => {
     getValue('isAutorized').then((result) => {
-      console.log('logout orders', result);
+      // console.log('logout orders', result);
       if (result === 'true') {
         LayoutAnimation.configureNext({
           create: {

@@ -10,19 +10,20 @@ const LOG_OUT = api + 'auth/logout';
 const PROFILE = api + 'profile';
 const ORDERS = api + 'orders';
 const ORDER_ID = api + 'orders';
-const SEND_ACTION = api + ORDERS;
+const SEND_ACTION = ORDERS;
 
-const post = async (url, params) => {
+const post = async (url, params, token) => {
    const data = JSON.stringify(params);
    return axios.post(url, data, {
             headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'X-Session-Token': token,
         },
    }).then((result) => {
     return result;
     }).catch((er) => {
-        // console.log('er', er);
+        console.log('er', er);
         if (er?.code === 'ERR_NETWORK') {
             return Alert.alert('Sin conexión a Internet','', [
                 {
@@ -82,7 +83,7 @@ export const getProfileRequest = (params) => {
     return data;
 }
 
-export const sendActionForOrder = (id, action) => {
-    const data = post(`${SEND_ACTION}/${id}/action/${action}`).then((response) => response);
+export const sendActionForOrder = (id, action, token) => {
+    const data = post(`${SEND_ACTION}/${id}/action/${action}`, null, token).then((response) => response);
     return data;
 }
