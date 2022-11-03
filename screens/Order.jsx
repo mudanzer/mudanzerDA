@@ -69,7 +69,7 @@ const Order = (props) => {
         getValue('sessionToken').then((token) => {
               if (token && token.length > 0) {
                 sendActionForOrder(id, ACTIONS.END_ORDER, token).then((response) => {
-                  if (response && response?.data) {
+                  if (response && response?.code === 204) {
                     // console.log(response.data);
                     Alert.alert('La solicitud para cerrar el pedido ha sido enviada. Un operador se pondrá en contacto contigo.')
                   }
