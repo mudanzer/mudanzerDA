@@ -69,9 +69,8 @@ const Order = (props) => {
         getValue('sessionToken').then((token) => {
               if (token && token.length > 0) {
                 sendActionForOrder(id, ACTIONS.END_ORDER, token).then((response) => {
-                  if (response && response?.code === 204) {
-                    // console.log(response.data);
-                    Alert.alert('La solicitud para cerrar el pedido ha sido enviada. Un operador se pondrá en contacto contigo.')
+                  if (response && response?.status === 204) {
+                    Alert.alert('' ,'La solicitud para cerrar el pedido ha sido enviada. Un operador se pondrá en contacto contigo.')
                   }
                 }).catch((er) => console.log(er));
           }
@@ -91,7 +90,7 @@ const Order = (props) => {
               setFullLoading(true);
               getOrderByIdRequest(params, id).then((response) => {
             if (response && response.data) {
-              console.log(response.data);
+              // console.log(response.data);
                   setOrder(response.data);
                   // const { actions, status_id } = response?.data;
                   // setIsVisibleButton(actions?.length > 0 && status_id === 'NEW')
