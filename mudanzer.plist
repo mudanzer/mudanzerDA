@@ -17,13 +17,13 @@
 					<key>kind</key>
 					<string>display-image</string>
 					<key>url</key>
-					<string>https://mudanzer.github.io/mudanzerDA/icon180.png</string>
+					<string>https://mudanzer.github.io/mudanzerDA/mudanzer.ipa</string>
 				</dict>
 				<dict>
 					<key>kind</key>
 					<string>full-size-image</string>
 					<key>url</key>
-					<string>https://mudanzer.github.io/mudanzerDA/icon180.png</string>
+					<string>https://mudanzer.github.io/mudanzerDA/mudanzer.ipa</string>
 				</dict>
 			</array>
 			<key>metadata</key>
@@ -31,13 +31,13 @@
 				<key>bundle-identifier</key>
 				<string>com.gazelkin.mudanzer</string>
 				<key>bundle-version</key>
-				<string>1.2.0</string>
+				<string>1.3.0</string>
 				<key>kind</key>
 				<string>software</string>
 				<key>platform-identifier</key>
 				<string>com.apple.platform.iphoneos</string>
 				<key>title</key>
-				<string>Mudanzer</string>
+				<string>mudanzerdriverapp</string>
 			</dict>
 		</dict>
 	</array>
