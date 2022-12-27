@@ -2,8 +2,8 @@ import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Alert } from 'react-native';
 import { navigateTo, save } from './index';
-// const api = 'http://10.11.1.21:8000/api/drivers/';
-const api = 'https://operador.mudanzer.es/api/drivers/';
+const api = 'http://10.11.1.21:8000/api/drivers/';
+// const api = 'https://operador.mudanzer.es/api/drivers/';
 
 const AUTH = api + 'auth/login';
 const LOG_OUT = api + 'auth/logout';
