@@ -31,7 +31,6 @@ const setupEnd = {
   textColor: 'white',
 };
 
-const INITIAL_DATE = new Date();
 const Balance = () => {
     const [balanceData, setBalanceData] = useState(null);
     const [balanceHistory, setBalanceHistory] = useState([]);
@@ -52,6 +51,24 @@ const Balance = () => {
         getBalance();
       }, []);
 
+    const closedCalendar = () => {
+      Animated.timing(animatedHeight, {
+        toValue: 0,
+        duration: 500,
+        easing: Easing.linear,
+        useNativeDriver: false,
+      }).start(() => {
+        Animated.timing(opacity, {
+          toValue: 0,
+          duration: 500,
+          easing: Easing.linear,
+          useNativeDriver: false,
+        }).start();
+      })
+      setInitialHeight(CALENDAR_HEIGHT.MIN_HEIGHT);
+      setEndDate(null);
+      setStartDate(null);
+    }
     const onPressCalendar = () => {
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
         if (initialHeight === CALENDAR_HEIGHT.MIN_HEIGHT) {
@@ -117,8 +134,8 @@ const Balance = () => {
         <View style={{ alignSelf: 'flex-end' }}>
           <Text style={{ color: 'gray', fontSize: 14}}>{item?.operation_balance + ' €'}</Text>
         </View>
-        <Text style={styles.itemDesc}>{item?.cause_description}</Text>
-        <Text style={{ paddingVertical: 6 }}>{item?.operation_type_description}</Text>
+        <Text style={styles.itemDesc}>{item?.translated_cause_description}</Text>
+        <Text style={{ paddingVertical: 6 }}>{item?.translated_operation_type_description}</Text>
         {typeof(item?.order_id) === 'number' && (
           <Text style={{ paddingVertical: 6 }}>{'Número de pedido: ' + item.order_id}</Text>
         )}
@@ -137,7 +154,7 @@ const Balance = () => {
                 <Text style={{ fontWeight: '600', color: 'black', fontSize: 16, paddingVertical: 30 }}>Sin información</Text>
                 <TouchableOpacity onPress={() => {
                   getBalance();
-                  onPressCalendar()
+                  closedCalendar()
                 }}>
                   <Text style={{ color: 'blue' }}>Mostrar información de todo el período</Text>
                 </TouchableOpacity>
