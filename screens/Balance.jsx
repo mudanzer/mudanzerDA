@@ -198,8 +198,8 @@ const Balance = () => {
       getValue('sessionToken').then((token) => {
         if (token && token.length > 0) {
           let params = {
-            date_from: date_from.format('YYYY-MM-DD HH:MM'),
-            date_to: date_to.format('YYYY-MM-DD HH:MM')
+            date_from: date_from.format('YYYY-MM-DD 00:00'),
+            date_to: date_to.format('YYYY-MM-DD 23:59')
           };
         setRefreshing(true)
         getBalanceInPeriod(params, token).then((response) => {
