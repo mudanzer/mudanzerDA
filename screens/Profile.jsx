@@ -2,8 +2,9 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { StyleSheet, LayoutAnimation, TouchableOpacity, Text, View, Alert, ScrollView, RefreshControl } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import { getValue, save } from "../store";
+import { getValue, save, statusBarHeight } from "../store";
 import { getProfileRequest, logoutRequest } from "../store/requests";
+import Scroll from "../components/Scroll";
 
 function Icon(props) {
     return <Ionicons size={32} style={{ marginBottom: -3 }} {...props} />;
@@ -12,7 +13,7 @@ function Icon(props) {
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const [userData, setUserData] = useState();
-  const [refressing, setRefreshing] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   const getUserData = () => {
         setRefreshing(true)
@@ -82,17 +83,14 @@ export default function ProfileScreen() {
   }, [])
   return (
     <View style={{flex: 1, backgroundColor: "#fff"}}>
-    <ScrollView style={{flex: 1}}
-      refreshControl={
-        <RefreshControl size={'large'} color={'black'} onRefresh={getUserData} refreshing={refressing}/>}
-      >
+      <Scroll onRefresh={getUserData} refreshing={refreshing}>
       <View style={styles.container}>
             <Text style={styles.title}>{`Nombre completo: ${userData?.fullName ?? ''}`}</Text>
             <Text style={styles.text}>{`Señal de llamada: ${userData?.callsign ?? ''}`}</Text>
             <Text style={styles.text}>{`Teléfono: ${userData?.phone ?? ''}`}</Text>
             <Text style={styles.text}>{`Número NIE: ${userData?.NIE ?? ''}`}</Text>
       </View>
-    </ScrollView>
+    </Scroll>
     <TouchableOpacity onPress={onPressLogoutBtn} style={{justifyContent: 'flex-end', alignItems: 'center', borderRadius: 10, borderWidth: 1, margin: 14, }}>
             <Text style={{padding: 8}}>Salida</Text>
     </TouchableOpacity>
@@ -107,6 +105,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 14,
     paddingVertical: 40,
+    paddingTop: statusBarHeight,
   },
   title: {
     fontSize: 20,

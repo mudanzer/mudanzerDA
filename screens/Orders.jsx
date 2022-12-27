@@ -4,7 +4,7 @@ import { ActivityIndicator, Alert, LayoutAnimation, RefreshControl, SafeAreaView
 import { FlatList } from "react-native-gesture-handler";
 
 import OrderCard from "../components/orderCard";
-import { getValue } from "../store";
+import { getValue, statusBarHeight } from "../store";
 import { getOrdersRequest } from "../store/requests";
 
 export default function Orders() {
@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 20,
+    paddingTop: statusBarHeight,
     backgroundColor: '#fff',
   },
 });

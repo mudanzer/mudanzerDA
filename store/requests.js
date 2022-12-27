@@ -2,13 +2,14 @@ import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Alert } from 'react-native';
 import { navigateTo, save } from './index';
-// const api = 'http://10.10.100.10:80/api/drivers/';
+// const api = 'http://10.11.1.21:8000/api/drivers/';
 const api = 'https://operador.mudanzer.es/api/drivers/';
 
 const AUTH = api + 'auth/login';
 const LOG_OUT = api + 'auth/logout';
 const PROFILE = api + 'profile';
 const ORDERS = api + 'orders';
+const BALANCE = api + 'funds_flow';
 const ORDER_ID = api + 'orders';
 const SEND_ACTION = ORDERS;
 
@@ -18,7 +19,7 @@ const post = async (url, params, token) => {
             headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'X-Session-Token': token,
+            'X-Session-Token': token ?? '',
         },
    }).then((result) => {
     return result;
@@ -85,5 +86,14 @@ export const getProfileRequest = (params) => {
 
 export const sendActionForOrder = (id, action, token) => {
     const data = post(`${SEND_ACTION}/${id}/action/${action}`, null, token).then((response) => response);
+    return data;
+}
+
+export const getBalanceRequest = (params) => {
+    const data = get(BALANCE, params).then((response) => response.data);
+    return data;
+}
+export const getBalanceInPeriod = (params, token) => {
+    const data = post(BALANCE, params, token).then((response) => response.data);
     return data;
 }

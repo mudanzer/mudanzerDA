@@ -1,9 +1,10 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { useColorScheme } from "react-native";
+import { useColorScheme, View } from "react-native";
 
 import Colors from "../constants/Colors";
+import Balance from "../screens/Balance";
 import Order from "../screens/Order";
 import Orders from "../screens/Orders";
 import ProfileScreen from "../screens/Profile";
@@ -23,8 +24,24 @@ export default function BottomTabNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="list-circle-outline" color={color} />
+            <>
+            <View style={{ paddingTop: 4 }}/>
+              <TabBarIcon name="list-outline" color={color} />
+            </>
           ),
+        }}
+      />
+      <BottomTab.Screen
+        name="Saldo"
+        component={BalanceNavigator}
+        options={{
+          headerShown: false,
+          tabBarIcon: ({ color }) => (
+            <>
+            <View style={{ paddingTop: 4 }}/>
+              <TabBarIcon name="wallet-outline" color={color} />
+            </>
+          )
         }}
       />
       <BottomTab.Screen
@@ -33,7 +50,10 @@ export default function BottomTabNavigator() {
         options={{
           headerShown: false,
           tabBarIcon: ({ color }) => (
-            <TabBarIcon name="person-circle-outline" color={color} />
+            <>
+            <View style={{ paddingTop: 4 }}/>
+              <TabBarIcon name="person-outline" color={color} />
+            </>
           )
         }}
       />
@@ -42,7 +62,7 @@ export default function BottomTabNavigator() {
 }
 
 function TabBarIcon(props) {
-  return <Ionicons size={32} style={{ marginBottom: -3 }} {...props} />;
+  return <Ionicons size={28} {...props} />;
 }
 
 const TabOneStack = createStackNavigator();
@@ -75,5 +95,19 @@ function ProfileNavigator() {
         options={{ headerShown: false}}
       />
     </TabTwoStack.Navigator>
+  );
+}
+
+const BalanceStack = createStackNavigator();
+
+function BalanceNavigator() {
+  return (
+    <BalanceStack.Navigator>
+      <BalanceStack.Screen
+        name="BalanceScreen"
+        component={Balance}
+        options={{ headerShown: false}}
+      />
+    </BalanceStack.Navigator>
   );
 }
