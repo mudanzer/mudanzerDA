@@ -6,6 +6,7 @@ import * as app from '../app.json';
 import { getValue, save } from "../store";
 import { authorizationRequest } from "../store/requests";
 import axios from "axios";
+import BrCode from "../components/brCode";
 function Icon(props) {
   return <Ionicons size={32} style={{ marginBottom: -3 }} {...props} />;
 }
@@ -18,9 +19,10 @@ export default function Authorization({ navigation }) {
 
   useEffect(() => {
     getValue('isAutorized').then((result) => {
-      if (result) {
-         setIsAutorized(result);
-          if (result === 'true') {
+      const val = JSON.parse(result);
+      if (val) {
+         setIsAutorized(val);
+          if (val) {
             navigation.navigate('Root')
           }
       }
@@ -45,8 +47,8 @@ export default function Authorization({ navigation }) {
           if (response && response.data) {
             save('sessionToken', response.data?.data?.sessionToken);
             save('isAutorized', 'true');
-            axios.defaults.headers.common['Authorization'] = `X-Session-Token: ${response.data?.data?.sessionToken}`;
             navigation.navigate('Root');
+            axios.defaults.headers.common['Authorization'] = `X-Session-Token: ${response.data?.data?.sessionToken}`;
           } else {
               setIsValid(false);
               setTimeout(() => {
@@ -62,6 +64,7 @@ export default function Authorization({ navigation }) {
         <Text style={styles.title}>MUDANZER</Text>
         <Text style={styles.version}>{`v${version.slice(0, 3)}`}</Text>
     </View>
+    {/* <BrCode /> */}
     <KeyboardAvoidingView style={{backgroundColor: "#fff"}} keyboardVerticalOffset={16} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
     <View style={{ justifyContent: "flex-end", marginHorizontal: 10, paddingVertical: 10,}}>
         <TextInput placeholderTextColor={'#CCC'} keyboardType='phone-pad' value={number} onTouchStart={() => setNumber('+34')} placeholder={'+34 '} onChangeText={setNumber} style={styles.input} onFocus={() => setIsValid(true)}/>

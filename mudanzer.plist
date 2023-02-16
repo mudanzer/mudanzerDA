@@ -31,13 +31,13 @@
 				<key>bundle-identifier</key>
 				<string>com.gazelkin.mudanzer</string>
 				<key>bundle-version</key>
-				<string>1.4.0</string>
+				<string>1.4.1</string>
 				<key>kind</key>
 				<string>software</string>
 				<key>platform-identifier</key>
 				<string>com.apple.platform.iphoneos</string>
 				<key>title</key>
-				<string>mudanzerdriverapp</string>
+				<string>Mudanzer</string>
 			</dict>
 		</dict>
 	</array>

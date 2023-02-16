@@ -21,19 +21,8 @@ export default function Orders() {
         duration: 500,
       }
     });
-    getValue('sessionToken').then((token) => {
-      if (token === '') {
-        setRefreshing(false);
-        logout();
-      }
-          if (token && token.length > 0) {
-            let params = {
-                headers: {
-                  "X-Session-Token": token,
-              }
-            };
         setRefreshing(true)
-        getOrdersRequest(params).then((response) => {
+        getOrdersRequest().then((response) => {
           if (response && response.data) {
                 const orders = response?.data?.orders;
                 setOrders(orders.filter((order) => order?.status_id === 'NEW') ?? []);
@@ -45,44 +34,8 @@ export default function Orders() {
         }).catch((errors) => {
           setRefreshing(false)
         })
-      } else { setRefreshing(false) }
-    }).catch(() => {
-      setRefreshing(false);
-      logout();
-    });
   }
 
-  const logout = () => {
-    getValue('isAutorized').then((result) => {
-      // console.log('logout orders', result);
-      if (result === 'true') {
-        LayoutAnimation.configureNext({
-          create: {
-            type: LayoutAnimation.Types.spring,
-            property: LayoutAnimation.Properties.opacity,
-            duration: 2000,
-            springDamping: 0.5,
-          }
-        });
-        getValue('sessionToken').then((token) => {
-                if (token.length > 0) {
-                  let params = {
-                      headers: {
-                        "X-Session-Token": token,
-                    }
-                  };
-                  logoutRequest(params).then(() => {
-                    save('isAutorized', 'false');
-                    save('sessionToken', '');
-                    navigation.navigate('Authorization');
-              });
-            }
-        });
-      } else {
-        navigation.navigate('Authorization');
-      }
-    }).catch(() => navigation.navigate('Authorization'))
-  }
   useEffect(() => {
     getOrders();
   }, [])

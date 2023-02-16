@@ -1,7 +1,7 @@
 import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Alert } from 'react-native';
-import { navigateTo, save } from './index';
+import { getValue, navigateTo, save } from './index';
 // const api = 'http://10.11.1.21:8000/api/drivers/';
 const api = 'https://operador.mudanzer.es/api/drivers/';
 
@@ -36,20 +36,25 @@ const post = async (url, params, token) => {
     })
 };
 
-const get = async (url, config) => {
-    return axios.get(url, config,{
+const get = async (url) => {
+    const token = await getValue('sessionToken').then((value) => value);
+    let params = {
+        headers: {
+          "X-Session-Token": JSON.parse(token),
+      }
+    };
+    return axios.get(url, params, {
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
         },
     }).then((result) => {
-        // console.log('result', result);
          return result;
-     }).catch((er) => {
-        // console.log('get er', er?.response?.status);
-        if (er?.response?.status === 401) {
-            save('isAutorized', 'false').then();
-            save('sessionToken', '').then();
+     }).catch(async(er) => {
+        const token = await getValue('sessionToken').then(value => value);
+        if (!token.length && er?.response?.status === 401) {
+          save('isAutorized', 'false').then();
+          save('sessionToken', '').then();
         }
         if (er?.code === 'ERR_NETWORK') {
             return Alert.alert('Sin conexión a Internet','', [

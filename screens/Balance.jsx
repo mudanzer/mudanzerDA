@@ -202,7 +202,9 @@ const Balance = () => {
             date_to: date_to.format('YYYY-MM-DD 23:59')
           };
         setRefreshing(true)
-        getBalanceInPeriod(params, token).then((response) => {
+        // console.log('token', JSON.parse(token));
+        const val = JSON.parse(token);
+        getBalanceInPeriod(params, val).then((response) => {
             if (response) {
                   setBalanceHistory(response.driver_funds_flows);
                   setRefreshing(false)

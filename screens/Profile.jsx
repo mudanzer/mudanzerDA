@@ -62,7 +62,7 @@ export default function ProfileScreen() {
                 if (token.length > 0) {
                   let params = {
                       headers: {
-                        "X-Session-Token": token,
+                        "X-Session-Token": JSON.parse(token),
                     }
                   };
                   logoutRequest(params).then(() => {

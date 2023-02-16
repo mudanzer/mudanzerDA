@@ -3,7 +3,7 @@
     "name": "Mudanzer",
     "owner": "y_balaev",
     "slug": "expo-template-tabs",
-    "version": "1.4.0",
+    "version": "1.4.1",
     "orientation": "portrait",
     "icon": "./assets/images/app-icon.png",
     "scheme": "myapp",
@@ -22,7 +22,7 @@
     "ios": {
       "supportsTablet": false,
       "bundleIdentifier": "com.gazelkin.mudanzer",
-      "buildNumber": "1.4.0"
+      "buildNumber": "1.4.1"
     },
     "android": {
       "package": "com.gazelkin.mudanzer",

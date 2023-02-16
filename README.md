@@ -1,4 +1,4 @@
-# Navigation Example
+# Mudanzer Driver App
 
 <p>
   <!-- iOS -->
@@ -19,13 +19,11 @@
   - iOS: [Client iOS](https://itunes.apple.com/app/apple-store/id982107779)
   - Android: [Client Android](https://play.google.com/store/apps/details?id=host.exp.exponent&referrer=blankexample)
 
-## Publishing
-
-- Deploy the native app to the App store and Play store using this guide: [Deployment](https://docs.expo.dev/distribution/app-stores/).
-- Deploy the website using this guide: [Web deployment](https://docs.expo.dev/distribution/publishing-websites/).
-
 ## 📝 Notes
 
-- Learn more about [Universal React](https://docs.expo.dev/).
-- See what API and components are [available in the React runtimes](https://docs.expo.dev/versions/latest/).
-- Find out more about developing apps and websites: [Official guides](https://docs.expo.dev/guides/).
+- [API](https://swagger-ui.swarm.gazelkin.local/?url=https%3A%2F%2Fdocs.crm-dev.gazelkin.local/api-drivers-mudanzer/swagger.yml%3Fraw%3D1#/)
+
+## build 
+
+- eas build --profile production (android)
+- use the Xcode and archive (ios)

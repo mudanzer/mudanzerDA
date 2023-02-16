@@ -9,15 +9,17 @@ async function save(key, value) {
     await SecureStore.setItemAsync(key, value);
   }
   
-async function getValue(key) {
-    let result = await SecureStore.getItemAsync(key);
-    if (result) {
-      console.log("Here's your value " + result);
-      return result;
-    } else {
-       console.log('No values stored under that key.', result);
-       return result;
-    }
+const getValue = async(key) => {
+    const result = await SecureStore.getItemAsync(key);
+    // if (result) {
+    //   // console.log("Here's your value " + result);
+    //   return result;
+    // } else {
+    //    console.log('No values stored under that key.', result);
+    //    return result;
+    // }
+    // console.log('asjf', JSON.stringify(result));
+    return JSON.stringify(result);
 }
 export const getPaymentMethodName = (method) => {
   switch (method) {

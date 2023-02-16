@@ -62,13 +62,15 @@ const Order = (props) => {
       if (currentAction === ACTIONS.START_ORDER) {
         getValue('sessionToken').then((token) => {
               if (token && token.length > 0) {
-                sendActionForOrder(id, ACTIONS.START_ORDER, token).then().catch((er) => console.log(er));
+                const val = JSON.parse(token)
+                sendActionForOrder(id, ACTIONS.START_ORDER, val).then().catch((er) => console.log(er));
           }
         });
       } else {
         getValue('sessionToken').then((token) => {
               if (token && token.length > 0) {
-                sendActionForOrder(id, ACTIONS.END_ORDER, token).then((response) => {
+                const val = JSON.parse(token)
+                sendActionForOrder(id, ACTIONS.END_ORDER, val).then((response) => {
                   if (response && response?.status === 204) {
                     Alert.alert('' ,'La solicitud para cerrar el pedido ha sido enviada. Un operador se pondrá en contacto contigo.')
                   }
@@ -84,7 +86,7 @@ const Order = (props) => {
             if (token.length > 0) {
               let params = {
                   headers: {
-                    "X-Session-Token": token,
+                    "X-Session-Token": JSON.parse(token),
                 }
               };
               setFullLoading(true);
