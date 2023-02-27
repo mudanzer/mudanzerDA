@@ -1,15 +1,10 @@
 import { useEffect, useState } from "react";
-import Ionicons from "@expo/vector-icons/Ionicons";
 
 import { View, StyleSheet, TouchableOpacity, Text, TextInput, KeyboardAvoidingView, Keyboard, Platform, Alert, Linking } from "react-native";
 import * as app from '../app.json';
 import { getValue, save } from "../store";
 import { authorizationRequest } from "../store/requests";
 import axios from "axios";
-import BrCode from "../components/brCode";
-function Icon(props) {
-  return <Ionicons size={32} style={{ marginBottom: -3 }} {...props} />;
-}
 export default function Authorization({ navigation }) {
     const [number, setNumber] = useState('');
     const [password, setCode] = useState('');

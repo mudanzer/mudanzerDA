@@ -5,6 +5,21 @@ import {LocaleConfig} from 'react-native-calendars';
 
 const { StatusBarManager } = NativeModules;
 
+
+export const PAYMENT_METHODS = {
+  CARD : 'card',
+  CASH : 'cash',
+  BANK: 'bank',
+  TERMINAL: 'terminal',
+};
+
+export const ORDER_ACTIONS = {
+  START_ORDER : 'start_order',
+  END_ORDER : 'end_order',
+  GET_PAYMENT_LINK: 'get_payment_link',
+  SEND_PAYMENT_SMS: 'send_payment_sms',
+}
+
 async function save(key, value) {
     await SecureStore.setItemAsync(key, value);
   }

@@ -1,21 +1,27 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
+import { View, StyleSheet } from "react-native";
 import QRCode from 'react-native-qrcode-svg';
 
 
-const BrCode = () => {
-
+const BrCode = ({ order = {}, smsLink = '' }) => {
+  const linkToPay = smsLink;
     return (
-        <TouchableOpacity style={{flex: 1, backgroundColor: '#fff', alignItems: 'center'}}>
-        <QRCode
-          size={50}
-          logo={require('../assets/images/app-icon.png')}
-        //   logoSize={60}
-          logoBorderRadius={15}
-          value = 'https://github.com/awesomejerry/react-native-qrcode-svg'
-        />
-        </TouchableOpacity>
+      <View style={styles.container}>
+          <QRCode
+            size={300}
+            logo={require('../assets/images/app-icon.png')}
+            logoSize={100}
+            logoBorderRadius={30}
+            value = {linkToPay}
+          />
+      </View>
     )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    alignItems: 'center',
+  },
+})
 
 export default BrCode;

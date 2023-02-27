@@ -3,17 +3,15 @@ import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View , ScrollView, Linking, Platform, Alert, RefreshControl, ActivityIndicator} from "react-native"
 import { SafeAreaView } from "react-native-safe-area-context";
-import { getPaymentMethodName, getValue } from "../store";
+import { getPaymentMethodName, getValue, ORDER_ACTIONS, PAYMENT_METHODS } from "../store";
 import { getOrderByIdRequest, sendActionForOrder } from "../store/requests";
 import Clipboard from '@react-native-clipboard/clipboard';
 import { getDate, getTimeString } from '../store/index';
 import Counter from "../components/Counter";
+import BrCode from "../components/brCode";
 
 // 90433607 1096
-const ACTIONS = {
-  START_ORDER : 'start_order',
-  END_ORDER : 'end_order',
-}
+
 const title_start_order = 'Iniciar pedido';
 const title_end_order = 'Completar el pedido';
 
@@ -28,6 +26,7 @@ const Order = (props) => {
     const id = props?.route?.params?.id;
     const [order, setOrder] = useState();
     const counter_total = order?.counter_total ?? 0;
+    const payMethod = order?.payment_method ?? PAYMENT_METHODS.CARD;
 
     const start_date = new Date(order?.date_start).getTime() / 1000 ?? 0;
     const [time, setTime] = useState(0);
@@ -48,29 +47,33 @@ const Order = (props) => {
     const currentAction = order?.actions[0] ?? [];
     const [textInButton, setTextInButton] = useState(title_start_order);
     const isVisibleButton = order?.actions?.length > 0 && order?.status_id === 'NEW'
+    const isVisibleQrBtn = payMethod && order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK);
+    const isVisibleSmsBtn = payMethod && order?.actions?.includes(ORDER_ACTIONS.SEND_PAYMENT_SMS);
+    const isVisiblePayBtns = payMethod && (order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK) || order?.actions?.includes(ORDER_ACTIONS.SEND_PAYMENT_SMS))
+    // console.log('action', order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK))
 
     useEffect(() => {
-      if (currentAction === ACTIONS.START_ORDER) {
+      if (currentAction === ORDER_ACTIONS.START_ORDER) {
         setTextInButton(title_start_order);
       }
-      if (currentAction === ACTIONS.END_ORDER){
+      if (currentAction === ORDER_ACTIONS.END_ORDER) {
         setTextInButton(title_end_order);
       }
     }, [currentAction])
 
     const onPressAction = () => {
-      if (currentAction === ACTIONS.START_ORDER) {
+      if (currentAction === ORDER_ACTIONS.START_ORDER) {
         getValue('sessionToken').then((token) => {
               if (token && token.length > 0) {
                 const val = JSON.parse(token)
-                sendActionForOrder(id, ACTIONS.START_ORDER, val).then().catch((er) => console.log(er));
+                sendActionForOrder(id, ORDER_ACTIONS.START_ORDER, val).then().catch((er) => console.log(er));
           }
         });
       } else {
         getValue('sessionToken').then((token) => {
               if (token && token.length > 0) {
                 const val = JSON.parse(token)
-                sendActionForOrder(id, ACTIONS.END_ORDER, val).then((response) => {
+                sendActionForOrder(id, ORDER_ACTIONS.END_ORDER, val).then((response) => {
                   if (response && response?.status === 204) {
                     Alert.alert('' ,'La solicitud para cerrar el pedido ha sido enviada. Un operador se pondrá en contacto contigo.')
                   }
@@ -81,6 +84,33 @@ const Order = (props) => {
       getOrderById();
     }
 
+    const onPressGetSmsLink = (type = 'sms') => {
+      switch (type) {
+        case 'sms':
+          return getValue('sessionToken').then((token) => {
+            if (token && token.length > 0) {
+                const val = JSON.parse(token)
+                  sendActionForOrder(id, ORDER_ACTIONS.SEND_PAYMENT_SMS, val).then((result) => {
+                      // console.log('result sms payment', result);
+                      if (result && result?.status === 204){
+                        Alert.alert('SMS enviado', '', [
+                          {
+                            text: "Bueno",
+                            onPress: null,
+                          }
+                        ])
+                      getOrderById();
+                    }
+                  }).catch((er) => console.log(er));
+            }
+          })
+          case 'qr':
+            return navigation.navigate('BrCode', {order: order})
+        default:
+          break;
+      }
+      getOrderById();
+    }
     const getOrderById = () => {
         getValue('sessionToken').then((token) => {
             if (token.length > 0) {
@@ -92,11 +122,8 @@ const Order = (props) => {
               setFullLoading(true);
               getOrderByIdRequest(params, id).then((response) => {
             if (response && response.data) {
-              // console.log(response.data);
+              // console.log(response.data)
                   setOrder(response.data);
-                  // const { actions, status_id } = response?.data;
-                  // setIsVisibleButton(actions?.length > 0 && status_id === 'NEW')
-                //   Alert.alert('getOrderByIdRequest', JSON.stringify(response))
                   setRefreshing(false)
                   setFullLoading(false);
               }
@@ -106,11 +133,8 @@ const Order = (props) => {
     }
     useEffect(() => {
         getOrderById();
-        // getOrderByIdRequest(data?.id).then((response) => setOrder(response.data));
     }, [])
     const copyAddress = (coord) => {
-      // const scheme = Platform.OS === 'ios' ? 'maps:' : 'geo:';
-      // const url = scheme + `${coord.lat},${coord.lng}`;
      const url = 'https://www.google.com/maps/place/' + coord.lat + ',' + coord.lng + '/@' + coord.lat + ',' + coord.lng + ',14z'
       Alert.alert('', coord?.address, 
         [
@@ -122,9 +146,6 @@ const Order = (props) => {
             onPress: () => Linking.openURL(url)
           }
         ])
-        // const url = 'https://www.google.com/maps/@' + coord.lat + ',' + coord.lng + ',14z';
-        // console.log('coor', coord, url);
-        // Linking.openURL(url);
     }
     const renderRoute = () => {
         return (
@@ -152,6 +173,25 @@ const Order = (props) => {
       )
     }
 
+    const payQRBtn = () => {
+        return (
+          <View style={{flexDirection: 'row', justifyContent: 'space-around'}}>
+            {isVisibleSmsBtn && (
+            <TouchableOpacity style={styles.payBtn} onPress={() => onPressGetSmsLink('sms')}>
+              <Text style={{paddingHorizontal: 8, color: 'black', fontSize: 14 }}>Enviar enlace de pago</Text>
+              <Icon name={'chatbubble-ellipses'} size={17}/>
+            </TouchableOpacity>
+          )}
+          {isVisibleQrBtn && (
+            <TouchableOpacity style={styles.payBtn} onPress={() => onPressGetSmsLink('qr')}>
+              <Text style={{paddingHorizontal: 8, color: 'black', fontSize: 14 }}>Pagar con QR</Text>
+              <Icon name={'qr-code'} size={16}/>
+            </TouchableOpacity>
+          )}
+          </View>
+        )
+    }
+
     return (
       <SafeAreaView style={{ flex: 1, backgroundColor: '#fff', marginBottom: -40, zIndex: 1 }}>
         {fullLoading && (
@@ -161,9 +201,9 @@ const Order = (props) => {
         )}
         {!order?.actions.length && order?.status_id === 'NEW' && renderAlert()}
         <ScrollView style={styles.container}
-        refreshControl={
-          <RefreshControl size={'large'} color={'black'} onRefresh={getOrderById} refreshing={refressing}/>}
-        >
+          refreshControl={
+            <RefreshControl size={'large'} color={'black'} onRefresh={getOrderById} refreshing={refressing}/>}
+          >
             <TouchableOpacity onPress={() => navigation.goBack()} style={{flexDirection: 'row', paddingHorizontal: 12}}>
                 <Icon name={'ios-arrow-back'}/>
                     <View style={{justifyContent: 'center', paddingLeft: 14}}>
@@ -185,6 +225,7 @@ const Order = (props) => {
                 <Text style={{padding: 12, color: 'black', fontSize: 18,}}>Costo</Text>
                     <Text style={{padding: 12, color: 'black', fontSize: 18,}}>{(order?.total > counter_total ? order?.total : counter_total) + ' €'}</Text>
                 </View>
+                {isVisiblePayBtns && payQRBtn()}
             <View style={{padding: 14}}>
                   <Text style={{fontSize: 16, color: 'gray'}}>{'Método de pago'}</Text>
                   <Text style={{fontSize: 16, color: 'black'}}>{getPaymentMethodName(order?.payment_method)}</Text>
@@ -202,10 +243,10 @@ const Order = (props) => {
                   </TouchableOpacity>
               )}
               {order?.route?.length > 0 && renderRoute()}
-                <View  style={{borderWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8, paddingRight: 50}}>
+                <View  style={{borderWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between', paddingVertical: 8}}>
                     <View>
-                        <Text style={{paddingHorizontal: 12, color: 'gray', fontSize: 18,}}>Cliente</Text>
-                        <Text style={{paddingHorizontal: 12, color: 'black', fontSize: 18,}}>{order?.client_name}</Text>
+                        <Text style={{paddingHorizontal: 12, color: 'gray', fontSize: 18}}>Cliente</Text>
+                        <Text style={{paddingHorizontal: 12, color: 'black', fontSize: 18}}>{order?.client_name}</Text>
                     </View>
                     <TouchableOpacity onPress={() => {
                         if (Platform.OS === 'android') {
@@ -213,7 +254,7 @@ const Order = (props) => {
                         } else {
                             Linking.openURL(`telprompt:${order?.client_phone_number}`);
                         }
-                    }} style={{justifyContent: "center", paddingHorizontal: 12}}>
+                    }} style={{justifyContent: 'center', paddingHorizontal: 12}}>
                         <Icon name='call' color={'gray'} size={26}/>
                      </TouchableOpacity>
              </View>
@@ -224,6 +265,10 @@ const Order = (props) => {
                   <Text style={{fontSize: 16, color: 'black'}}>{order?.notes}</Text>
                </View>
              )}
+
+              {/* {payMethod === PAYMENT_METHODS.CARD && (
+                <BrCode order={order} smsLink={smsLink} />
+              )} */}
 
             {/* <View style={{marginBottom: 60}} />/ */}
         </ScrollView>
@@ -248,7 +293,15 @@ const styles = StyleSheet.create({
       borderRadius: 10,
       padding: 14,
       alignItems: 'center'
-    }
+    },
+    payBtn: {
+      margin: 14,
+      borderWidth: 0.5,
+      borderRadius: 10,
+      padding: 8,
+      flexDirection: 'row',
+      justifyContent: 'center',
+    },
   });
   
 export default Order;

@@ -2,8 +2,8 @@ import { useRoute } from '@react-navigation/native';
 import axios from 'axios';
 import { Alert } from 'react-native';
 import { getValue, navigateTo, save } from './index';
-// const api = 'http://10.11.1.21:8000/api/drivers/';
-const api = 'https://operador.mudanzer.es/api/drivers/';
+const api = 'http://10.10.12.46/api/executors/';
+// const api = 'https://operador.mudanzer.es/api/executors/';
 
 const AUTH = api + 'auth/login';
 const LOG_OUT = api + 'auth/logout';
@@ -24,7 +24,7 @@ const post = async (url, params, token) => {
    }).then((result) => {
     return result;
     }).catch((er) => {
-        console.log('er', er);
+        console.log('er', er, er?.code);
         if (er?.code === 'ERR_NETWORK') {
             return Alert.alert('Sin conexión a Internet','', [
                 {
