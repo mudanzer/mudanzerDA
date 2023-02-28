@@ -46,11 +46,10 @@ const Order = (props) => {
 
     const currentAction = order?.actions[0] ?? [];
     const [textInButton, setTextInButton] = useState(title_start_order);
-    const isVisibleButton = order?.actions?.length > 0 && order?.status_id === 'NEW'
+    const isVisibleButton = order?.actions?.length > 0 && order?.status_id === 'NEW' && order?.actions?.includes(ORDER_ACTIONS.START_ORDER);
     const isVisibleQrBtn = payMethod && order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK);
     const isVisibleSmsBtn = payMethod && order?.actions?.includes(ORDER_ACTIONS.SEND_PAYMENT_SMS);
     const isVisiblePayBtns = payMethod && (order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK) || order?.actions?.includes(ORDER_ACTIONS.SEND_PAYMENT_SMS))
-    // console.log('action', order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK))
 
     useEffect(() => {
       if (currentAction === ORDER_ACTIONS.START_ORDER) {
@@ -225,6 +224,12 @@ const Order = (props) => {
                 <Text style={{padding: 12, color: 'black', fontSize: 18,}}>Costo</Text>
                     <Text style={{padding: 12, color: 'black', fontSize: 18,}}>{(order?.total > counter_total ? order?.total : counter_total) + ' €'}</Text>
                 </View>
+                {order?.paid > 0 && (
+                  <View style={{borderWidth: 0.5, borderColor: 'lightgray', flexDirection: 'row', justifyContent: 'space-between'}}>
+                  <Text style={{padding: 12, color: 'green', fontSize: 16 }}>Pagado</Text>
+                      <Text style={{padding: 12, color: 'green', fontSize: 16 }}>{order?.paid + ' €'}</Text>
+                  </View>
+                )}
                 {isVisiblePayBtns && payQRBtn()}
             <View style={{padding: 14}}>
                   <Text style={{fontSize: 16, color: 'gray'}}>{'Método de pago'}</Text>
