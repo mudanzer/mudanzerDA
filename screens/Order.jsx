@@ -46,7 +46,7 @@ const Order = (props) => {
 
     const currentAction = order?.actions[0] ?? [];
     const [textInButton, setTextInButton] = useState(title_start_order);
-    const isVisibleButton = order?.actions?.length > 0 && order?.status_id === 'NEW' && order?.actions?.includes(ORDER_ACTIONS.START_ORDER);
+    const isVisibleButton = order?.actions?.length > 0 && order?.status_id === 'NEW' && (order?.actions?.includes(ORDER_ACTIONS.START_ORDER) || order?.actions?.includes(ORDER_ACTIONS.END_ORDER));
     const isVisibleQrBtn = payMethod && order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK);
     const isVisibleSmsBtn = payMethod && order?.actions?.includes(ORDER_ACTIONS.SEND_PAYMENT_SMS);
     const isVisiblePayBtns = payMethod && (order?.actions?.includes(ORDER_ACTIONS.GET_PAYMENT_LINK) || order?.actions?.includes(ORDER_ACTIONS.SEND_PAYMENT_SMS))
