@@ -9,9 +9,10 @@ import { sendActionForOrder } from "../store/requests";
 const FullBRCode = (props) => {
     const navigation = useNavigation();
     const {order} = props?.route?.params;
-    const { total, id, paid } = order;
+    const { total, id, paid, counter_total } = order;
+    const totalAmount = (total > counter_total ? total : counter_total) - paid;
     const onBack = () => navigation.goBack();
-    const [smsLink, setSmsLink] = useState(`https://api.mudanzer.es/api/payment/redirect/auto/?payeeType=order&payeeId=${id}&amount=${total}`);
+    const [smsLink, setSmsLink] = useState(`https://api.mudanzer.es/api/payment/redirect/auto/?payeeType=order&payeeId=${id}&amount=${totalAmount}`);
 
     useEffect(() => {
         getValue('sessionToken').then((token) => {
@@ -39,7 +40,7 @@ const FullBRCode = (props) => {
                         <Text style={[styles.defaultText, { paddingVertical: 8 }]}>{`Número de pedido: ${id}`}</Text>
                         <Text style={[styles.defaultText, { paddingVertical: 8 }]}>{`Valor del pedido: ${total} €`}</Text>
                         {!!paid && (<Text style={[styles.defaultText, { paddingVertical: 8 }]}>{`Pagado: ${paid} €`}</Text>)}
-                        <Text style={[styles.defaultText, {fontWeight: '700', paddingVertical: 14}]}>{`Pagar: ${total - paid} €`}</Text>
+                        <Text style={[styles.defaultText, {fontWeight: '700', paddingVertical: 14}]}>{`Pagar: ${totalAmount} €`}</Text>
                 </View>
              </View>
         </View>
